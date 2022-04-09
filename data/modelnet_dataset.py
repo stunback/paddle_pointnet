@@ -7,6 +7,7 @@ import tqdm
 
 sys.path.append('../')
 from utils import visualization
+from data import augmentation
 
 
 class ModelNetDataset(paddle.io.Dataset):
@@ -63,7 +64,13 @@ class ModelNetDataset(paddle.io.Dataset):
         :param index: int
         :return: (np.ndarry, np.ndarray), shape0=[2048, 3], shape1=[1]
         """
-        data = paddle.to_tensor(self.datas[index].transpose((1, 0)), dtype=paddle.float32)
+        if self.mode == 'train':
+            datas_trans = self.datas[index]
+            datas_trans = augmentation.augment_pcd(datas_trans)
+        else:
+            datas_trans = self.datas[index]
+            datas_trans = augmentation.augment_pcd(datas_trans, None, None, None, None, None, True)
+        data = paddle.to_tensor(datas_trans.transpose((1, 0)), dtype=paddle.float32)
         label = paddle.to_tensor(self.labels[index], dtype=paddle.int32)
 
         return data, label
