@@ -99,10 +99,6 @@ def augment_pcd(pcd, drop_rate=0.5, scale=1.25, shift=0.1, rotate_rad=0.785, jit
     :param use_normalize: bool
     :return: np.ndarry, shape=[n, 3]
     """
-    if use_normalize:
-        pcd = normalize_pcd(pcd)
-    else:
-        pcd = pcd
     if drop_rate:
         pcd = random_pcd_dropout(pcd, drop_rate)
     if scale:
@@ -113,6 +109,10 @@ def augment_pcd(pcd, drop_rate=0.5, scale=1.25, shift=0.1, rotate_rad=0.785, jit
         pcd = random_pcd_rotate(pcd, rotate_rad)
     if jitter:
         pcd = random_pcd_jitter(pcd, jitter[0], jitter[1])
+    if use_normalize:
+        pcd = normalize_pcd(pcd)
+    else:
+        pcd = pcd
 
     return pcd
 
