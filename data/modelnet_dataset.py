@@ -70,7 +70,7 @@ class ModelNetDataset(paddle.io.Dataset):
         else:
             datas_trans = self.datas[index]
             datas_trans = augmentation.augment_pcd(datas_trans, None, None, None, None, None, True)
-        data = paddle.to_tensor(datas_trans.transpose((1, 0)), dtype=paddle.float32)
+        data = paddle.to_tensor(datas_trans.transpose([1, 0]), dtype=paddle.float32)
         label = paddle.to_tensor(self.labels[index], dtype=paddle.int32)
 
         return data, label

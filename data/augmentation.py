@@ -1,6 +1,8 @@
+import sys
 import numpy as np
 import paddle
 
+sys.path.append('./')
 from utils import geometry_utils
 
 
@@ -55,8 +57,8 @@ def random_pcd_rotate(pcd: np.ndarray, max_rad: float = 0.785):
     vec = np.random.rand(3)
     vec_unit = vec / np.linalg.norm(vec)
     r_vec = theta * vec_unit
-    r_mat = geometry_utils.angleaxis_to_matrix(r_vec)
-    pcd_rotated = np.matmul(r_mat, pcd)
+    r_mat = geometry_utils.angleaxis_to_matrix(r_vec.reshape([3, -1]))
+    pcd_rotated = np.matmul(r_mat, pcd.T).T
 
     return pcd_rotated
 
@@ -68,7 +70,7 @@ def random_pcd_jitter(pcd: np.ndarray, alpha: float = 0.02, beta: float = 0.05):
     :param beta: float
     :return: np.ndarray, shape=[n, 3]
     """
-    jitter = np.clip(alpha * np.random.randn(pcd.shape), -beta, beta)
+    jitter = np.clip(alpha * np.random.randn(*pcd.shape), -beta, beta)
     pcd_jittered = pcd + jitter
 
     return pcd_jittered
@@ -117,6 +119,5 @@ def augment_pcd(pcd, drop_rate=0.5, scale=1.25, shift=0.1, rotate_rad=0.785, jit
 
 if __name__ == '__main__':
     a = np.random.randn(500, 3)
-    print(a.shape)
-    aa = random_pcd_dropout(a)
+    aa = augment_pcd(a)
     print(aa.shape)
