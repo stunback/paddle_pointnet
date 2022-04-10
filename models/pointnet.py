@@ -12,21 +12,20 @@ class TNet(paddle.nn.Layer):
         self.conv_block = paddle.nn.Sequential(Conv1DBlock(in_channels, 64, 1),
                                                Conv1DBlock(64, 128, 1),
                                                Conv1DBlock(128, 1024, 1),
-                                               paddle.nn.AdaptiveAvgPool1D(1))
+                                               paddle.nn.AdaptiveMaxPool1D(1))
         self.flatten = paddle.nn.Flatten()
         self.mlp = paddle.nn.Sequential(paddle.nn.Linear(1024, 512),
                                         paddle.nn.ReLU(),
                                         paddle.nn.Linear(512, 256),
                                         paddle.nn.ReLU(),
-                                        paddle.nn.Linear(256, in_channels ** 2,
-                                                         bias_attr=paddle.ParamAttr(
-                                                             initializer=paddle.nn.initializer.Assign(
-                                                                 paddle.eye(in_channels).reshape([-1])))))
+                                        paddle.nn.Linear(256, in_channels ** 2))
+        self.identity = paddle.eye(in_channels, dtype=paddle.float32).reshape([-1])
 
     def forward(self, x):
         x = self.conv_block(x)
         x = self.flatten(x)
-        y = self.mlp(x)
+        x = self.mlp(x)
+        y = x + self.identity
 
         return y
 
@@ -45,7 +44,7 @@ class PointNet(paddle.nn.Layer):
         self.mlp2 = paddle.nn.Sequential(Conv1DBlock(64, 64, 1),
                                          Conv1DBlock(64, 128, 1),
                                          Conv1DBlock(128, 1024, 1))
-        self.maxpool = paddle.nn.AdaptiveAvgPool1D(1)
+        self.maxpool = paddle.nn.AdaptiveMaxPool1D(1)
         self.flatten = paddle.nn.Flatten()
         self.mlp3 = paddle.nn.Sequential(paddle.nn.Linear(1024, 512),
                                          paddle.nn.ReLU(),
