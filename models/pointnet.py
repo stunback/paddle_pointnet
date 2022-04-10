@@ -1,3 +1,4 @@
+import numpy as np
 import paddle
 from models.base import Conv1DBN, Conv1DBlock
 
@@ -70,4 +71,3 @@ class PointNet(paddle.nn.Layer):
 if __name__ == '__main__':
     net = PointNet()
     paddle.summary(net, (32, 3, 2048))
-

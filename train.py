@@ -63,7 +63,7 @@ def train(opts):
     acc = paddle.metric.Accuracy()
 
     epochs = opts.epochs
-    lr = paddle.optimizer.lr.ReduceOnPlateau(opts.lr, factor=0.5, patience=10, threshold=0.001, verbose=True)
+    lr = paddle.optimizer.lr.ReduceOnPlateau(opts.lr, factor=0.5, patience=10, threshold=0.01, verbose=True)
     if opts.optim == 'adam':
         optim = paddle.optimizer.Adam(lr, parameters=net.parameters(), weight_decay=0.001)
     else:

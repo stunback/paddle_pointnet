@@ -33,7 +33,7 @@ class MatRegularizationLoss(paddle.nn.Layer):
     def forward(self, x):
         x_mat = x.reshape([-1, self.in_channels, self.in_channels])
         target = paddle.eye(self.in_channels)
-        y = paddle.norm(paddle.matmul(x_mat, x_mat - target), p='fro', axis=[1, 2])
+        y = paddle.norm(target - paddle.matmul(x_mat, x_mat.T), p='fro', axis=[1, 2])
         loss = paddle.mean(y)
 
         return loss

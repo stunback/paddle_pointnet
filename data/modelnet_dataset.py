@@ -66,10 +66,10 @@ class ModelNetDataset(paddle.io.Dataset):
         """
         if self.mode == 'train':
             datas_trans = self.datas[index]
-            datas_trans = augmentation.augment_pcd(datas_trans, drop_rate=0., rotate_rad=0.)
+            # datas_trans = augmentation.augment_pcd(datas_trans, drop_rate=0., rotate_rad=0.)
         else:
             datas_trans = self.datas[index]
-            datas_trans = augmentation.augment_pcd(datas_trans, None, None, None, None, None, True)
+            # datas_trans = augmentation.augment_pcd(datas_trans, None, None, None, None, None, True)
         data = paddle.to_tensor(datas_trans.transpose([1, 0]), dtype=paddle.float32)
         label = paddle.to_tensor(self.labels[index], dtype=paddle.int32)
 
