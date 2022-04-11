@@ -47,23 +47,30 @@ def random_pcd_shift(pcd: np.ndarray, max_shift: float = 0.1):
     return pcd_shifted
 
 
-def random_pcd_rotate(pcd: np.ndarray, max_rad: float = 0.785):
+def random_pcd_rotate(pcd: np.ndarray, max_rad: float = 2 * np.pi):
     """
     :param pcd: np.ndarray, shape=[n, 3]
     :param max_rad: float
     :return: np.ndarray, shape=[n, 3]
     """
-    theta = np.random.uniform(-max_rad, max_rad)
-    vec = np.random.rand(3)
-    vec_unit = vec / np.linalg.norm(vec)
-    r_vec = theta * vec_unit
-    r_mat = geometry_utils.angleaxis_to_matrix(r_vec.reshape([3, -1]))
-    pcd_rotated = np.matmul(r_mat, pcd.T).T
+    # theta = np.random.uniform(-max_rad, max_rad)
+    # vec = np.random.rand(3)
+    # vec_unit = vec / np.linalg.norm(vec)
+    # r_vec = theta * vec_unit
+    # r_mat = geometry_utils.angleaxis_to_matrix(r_vec.reshape([3, -1]))
+    # pcd_rotated = np.matmul(r_mat, pcd.T).T
+    angle = np.random.uniform() * max_rad
+    cosval = np.cos(angle)
+    sinval = np.sin(angle)
+    rotation_matrix = np.array([[cosval, sinval, 0],
+                                [-sinval, cosval, 0],
+                                [0, 0, 1]], dtype=np.float32)
+    pcd_rotated = np.matmul(rotation_matrix, pcd.T).T
 
     return pcd_rotated
 
 
-def random_pcd_jitter(pcd: np.ndarray, alpha: float = 0.02, beta: float = 0.05):
+def random_pcd_jitter(pcd: np.ndarray, alpha: float = 0.02, beta: float = 0.1):
     """
     :param pcd: np.ndarray, shape=[n, 3]
     :param alpha: float
@@ -88,7 +95,7 @@ def normalize_pcd(pcd: np.ndarray):
     return pcd_normalized
 
 
-def augment_pcd(pcd, drop_rate=0.5, scale=1.25, shift=0.1, rotate_rad=0.785, jitter=(0.02, 0.05), use_normalize=True):
+def augment_pcd(pcd, drop_rate=0.5, scale=1.25, shift=0.1, rotate_rad=0.785, jitter=(0.02, 0.1), use_normalize=True):
     """
     :param pcd: np.ndarry, shape=[n, 3]
     :param drop_rate: float or None
@@ -105,14 +112,14 @@ def augment_pcd(pcd, drop_rate=0.5, scale=1.25, shift=0.1, rotate_rad=0.785, jit
         pcd = pcd
     if drop_rate:
         pcd = random_pcd_dropout(pcd, drop_rate)
+    if rotate_rad:
+        pcd = random_pcd_rotate(pcd, rotate_rad)
     if jitter:
         pcd = random_pcd_jitter(pcd, jitter[0], jitter[1])
     if scale:
         pcd = random_pcd_scale(pcd, scale)
     if shift:
         pcd = random_pcd_shift(pcd, shift)
-    if rotate_rad:
-        pcd = random_pcd_rotate(pcd, rotate_rad)
 
     return pcd
 
