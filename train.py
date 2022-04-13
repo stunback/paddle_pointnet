@@ -47,7 +47,7 @@ def train(opts):
         train_loader, val_loader = loaders
         num_classes = 16
     else:
-        loaders = modelnet_dataset.get_dataloader(opts.dataset_path, batch_size=opts.batchsize, num_workers=opts.workers)
+        loaders = modelnet_dataset.get_txt_dataloader(opts.dataset_path, batch_size=opts.batchsize, num_workers=opts.workers)
         train_loader, val_loader = loaders
         num_classes = 40
     # Step 2: load model, loss, optimizer
@@ -63,11 +63,12 @@ def train(opts):
     acc = paddle.metric.Accuracy()
 
     epochs = opts.epochs
-    lr = paddle.optimizer.lr.ReduceOnPlateau(opts.lr, factor=0.5, patience=10, threshold=0.01, verbose=True)
+    # lr = paddle.optimizer.lr.ReduceOnPlateau(opts.lr, factor=0.5, patience=10, threshold=0.01, verbose=True)
+    lr = paddle.optimizer.lr.StepDecay(opts.lr, step_size=20, gamma=0.7, verbose=True)
     if opts.optim == 'adam':
-        optim = paddle.optimizer.Adam(lr, parameters=net.parameters(), weight_decay=0.001)
+        optim = paddle.optimizer.Adam(lr, parameters=net.parameters(), weight_decay=0.0001)
     else:
-        optim = paddle.optimizer.SGD(lr, parameters=net.parameters(), weight_decay=0.001)
+        optim = paddle.optimizer.SGD(lr, parameters=net.parameters(), weight_decay=0.0001)
 
     if opts.resume:
         net.set_state_dict(paddle.load(opts.checkpoint))
@@ -120,7 +121,7 @@ def train(opts):
                                     value=batch_loss,
                                     step=epoch * train_loop.total + batch_id)
 
-        lr.step(all_batch_loss / len(train_loader))
+        lr.step()
 
         # Step 3.2: validate after one train epoch
         net.eval()

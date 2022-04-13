@@ -51,7 +51,7 @@ class PointNet(paddle.nn.Layer):
                                          paddle.nn.ReLU(),
                                          paddle.nn.Linear(512, 256),
                                          paddle.nn.ReLU(),
-                                         paddle.nn.Dropout(0.5),
+                                         paddle.nn.Dropout(0.4),
                                          paddle.nn.Linear(256, num_classes))
 
     def forward(self, x):

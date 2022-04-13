@@ -88,9 +88,13 @@ def normalize_pcd(pcd: np.ndarray):
     :param pcd: np.ndarray, shape=[n, 3]
     :return: np.ndarray, shape=[n, 3]
     """
-    mean = np.mean(pcd, axis=0)
-    std = np.std(pcd, axis=0)
-    pcd_normalized = (pcd - mean) / std
+    # mean = np.mean(pcd, axis=0)
+    # std = np.std(pcd, axis=0)
+    # pcd_normalized = (pcd - mean) / std
+    centroid = np.mean(pcd, axis=0)
+    pcd = pcd - centroid
+    m = np.max(np.sqrt(np.sum(pcd ** 2, axis=1)))
+    pcd_normalized = pcd / m
 
     return pcd_normalized
 
@@ -122,6 +126,31 @@ def augment_pcd(pcd, drop_rate=0.5, scale=1.25, shift=0.1, rotate_rad=0.785, jit
         pcd = random_pcd_shift(pcd, shift)
 
     return pcd
+
+
+def farthest_point_sample(pcd, npoint):
+    """
+    Input:
+        pcd: pointcloud data, [N, D]
+        npoint: number of samples
+    Return:
+        centroids: sampled pointcloud index, [npoint, D]
+    """
+    N, D = pcd.shape
+    xyz = pcd[:, :3]
+    centroids = np.zeros((npoint,))
+    distance = np.ones(shape=[N]) * 1e10
+    farthest = np.random.randint(0, N)
+    for i in range(npoint):
+        centroids[i] = farthest
+        centroid = xyz[farthest, :]
+        dist = np.sum((xyz - centroid) ** 2, -1)
+        mask = dist < distance
+        distance[mask] = dist[mask]
+        farthest = np.argmax(distance, -1)
+    pcd_sampled = pcd[centroids.astype(np.int32)]
+
+    return pcd_sampled
 
 
 if __name__ == '__main__':
