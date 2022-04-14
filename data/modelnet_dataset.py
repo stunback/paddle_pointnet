@@ -155,7 +155,7 @@ class ModelNetTxtDataset(paddle.io.Dataset):
 
     def __getitem__(self, index):
         if self.mode == 'train':
-            data_trans = augmentation.augment_pcd(self.datas[index], 0, 0, 0, 2*np.pi, (0.02, 0.05), True)
+            data_trans = augmentation.augment_pcd(self.datas[index], 0, 1.25, 0.1, 0, (0.01, 0.05), True)
         else:
             data_trans = augmentation.augment_pcd(self.datas[index], 0, 0, 0, 0, None, True)
         data = paddle.to_tensor(data_trans.transpose([1, 0]), dtype=paddle.float32)
