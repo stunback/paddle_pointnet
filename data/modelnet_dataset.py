@@ -4,7 +4,6 @@ import numpy as np
 import h5py
 import paddle
 import tqdm
-from memory_profiler import profile
 
 sys.path.append('../')
 from utils import visualization
