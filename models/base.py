@@ -75,9 +75,9 @@ class Conv1DBN(paddle.nn.Layer):
 
 
 class Conv1DBlock(paddle.nn.Layer):
-    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1):
+    def __init__(self, in_channels: int, out_channels: int, kernel_size=1, stride=1, groups=1):
         super(Conv1DBlock, self).__init__()
-        self.conv = paddle.nn.Conv1D(in_channels, out_channels, kernel_size, stride, padding='SAME')
+        self.conv = paddle.nn.Conv1D(in_channels, out_channels, kernel_size, stride, padding='SAME', groups=groups)
         self.bn = paddle.nn.BatchNorm1D(out_channels)
         self.relu = paddle.nn.ReLU()
 
@@ -87,3 +87,21 @@ class Conv1DBlock(paddle.nn.Layer):
         y = self.relu(x)
 
         return y
+
+
+class Conv1DResBlock(paddle.nn.Layer):
+    def __init__(self, in_channels: int, kernel_size=1, groups=1, res_expansion=1.0):
+        super(Conv1DResBlock, self).__init__()
+        mid_channels = int(in_channels * res_expansion)
+        self.mlp1 = Conv1DBlock(in_channels, mid_channels, kernel_size, 1, groups)
+        if groups > 1:
+            self.mlp2 = paddle.nn.Sequential(Conv1DBlock(mid_channels, in_channels, kernel_size, 1, groups),
+                                             Conv1DBN(in_channels, in_channels, kernel_size))
+        else:
+            self.mlp2 = paddle.nn.Sequential(Conv1DBN(mid_channels, in_channels, kernel_size))
+
+        self.relu = paddle.nn.ReLU()
+
+    def forward(self, x):
+        return self.relu(self.mlp2(self.mlp1(x)) + x)
+

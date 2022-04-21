@@ -251,7 +251,7 @@ class PointNet2SSG(paddle.nn.Layer):
     """
     PointNet++ SSG new
     """
-    def __init__(self, num_class, normal_channel=False):
+    def __init__(self, num_classes=40, normal_channel=False):
         super(PointNet2SSG, self).__init__()
         in_channel = 6 if normal_channel else 3
         self.normal_channel = normal_channel
@@ -264,7 +264,7 @@ class PointNet2SSG(paddle.nn.Layer):
         self.fc2 = paddle.nn.Linear(512, 256)
         self.bn2 = paddle.nn.BatchNorm1D(256)
         self.drop2 = paddle.nn.Dropout(0.4)
-        self.fc3 = paddle.nn.Linear(256, num_class)
+        self.fc3 = paddle.nn.Linear(256, num_classes)
 
     def forward(self, xyz):
         B, _, _ = xyz.shape
@@ -285,7 +285,7 @@ class PointNet2SSG(paddle.nn.Layer):
 
 
 class PointNet2MSG(paddle.nn.Layer):
-    def __init__(self, num_class, normal_channel=False):
+    def __init__(self, num_classes=40, normal_channel=False):
         super(PointNet2MSG, self).__init__()
         in_channel = 6 if normal_channel else 3
         self.normal_channel = normal_channel
@@ -298,7 +298,7 @@ class PointNet2MSG(paddle.nn.Layer):
         self.fc2 = paddle.nn.Linear(512, 256)
         self.bn2 = paddle.nn.BatchNorm1D(256)
         self.drop2 = paddle.nn.Dropout(0.5)
-        self.fc3 = paddle.nn.Linear(256, num_class)
+        self.fc3 = paddle.nn.Linear(256, num_classes)
 
     def forward(self, xyz):
         B, _, _ = xyz.shape
