@@ -138,22 +138,18 @@ class LocalGrouper(paddle.nn.Layer):
             self.normalize = None
         if self.normalize is not None:
             add_channel = 3 if self.use_xyz else 0
-            '''
-            self.alpha_attr = paddle.ParamAttr(initializer=paddle.ones([1, 1, 1, channel + add_channel]))
+            # self.alpha_attr = paddle.ParamAttr(initializer=paddle.ones([1, 1, 1, channel + add_channel]))
             self.affine_alpha = paddle.create_parameter(shape=[1, 1, 1, channel + add_channel],
                                                         dtype=paddle.float32,
-                                                        #attr=self.alpha_attr
-                                                        )
-            self.beta_attr = paddle.ParamAttr(initializer=paddle.ones([1, 1, 1, channel + add_channel]))
+                                                        default_initializer=paddle.nn.initializer.Constant(1.))
+            # self.beta_attr = paddle.ParamAttr(initializer=paddle.ones([1, 1, 1, channel + add_channel]))
             self.affine_beta = paddle.create_parameter(shape=[1, 1, 1, channel + add_channel],
                                                        dtype=paddle.float32,
-                                                       #attr=self.beta_attr
-                                                       )
+                                                       default_initializer=paddle.nn.initializer.Constant(1.))
             self.add_parameter('alpha', self.affine_alpha)
             self.add_parameter('beta', self.affine_beta)
-            '''
-            self.affine_alpha = paddle.ones(shape=[1, 1, 1, channel + add_channel], dtype=paddle.float32)
-            self.affine_beta = paddle.ones(shape=[1, 1, 1, channel + add_channel], dtype=paddle.float32)
+            # self.affine_alpha = paddle.ones(shape=[1, 1, 1, channel + add_channel], dtype=paddle.float32)
+            # self.affine_beta = paddle.ones(shape=[1, 1, 1, channel + add_channel], dtype=paddle.float32)
 
     def forward(self, xyz, points):
         B, N, C = xyz.shape
