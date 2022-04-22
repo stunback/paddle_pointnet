@@ -486,11 +486,11 @@ def train4(opts):
     epochs = opts.epochs
     # lr = paddle.optimizer.lr.ReduceOnPlateau(opts.lr, factor=0.5, patience=10, threshold=0.01, verbose=True)
     # lr = paddle.optimizer.lr.StepDecay(opts.lr, step_size=20, gamma=0.7, verbose=True)
-    lr = paddle.optimizer.lr.CosineAnnealingDecay(opts.lr, opts.epochs, eta_min=opts.lr, verbose=True)
+    lr = paddle.optimizer.lr.CosineAnnealingDecay(opts.lr, opts.epochs, eta_min=opts.lr * 0.05, verbose=True)
     if opts.optim == 'adam':
         optim = paddle.optimizer.Adam(lr, parameters=net.parameters(), weight_decay=0.0001)
     else:
-        optim = paddle.optimizer.SGD(lr, parameters=net.parameters(), weight_decay=0.0001)
+        optim = paddle.optimizer.SGD(lr, parameters=net.parameters(), weight_decay=0.0002)
 
     if opts.resume:
         net.set_state_dict(paddle.load(opts.checkpoint))

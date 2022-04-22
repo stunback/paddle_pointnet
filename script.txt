@@ -4,4 +4,4 @@ python train.py --dataset modelnet --dataset_path ../../data/data137713/ShapeNet
 
 python train.py --dataset modelnet --dataset_path ../../data/data137713/ShapeNetDataset -e 300 -b 32 --workers 4 --model dgcnn
 
-python train.py --dataset modelnet --dataset_path ../../data/data137713/ShapeNetDataset -e 300 -b 32 --workers 4 --model pointmlp
+python train.py --dataset modelnet --dataset_path ../../data/data137713/ShapeNetDataset -e 300 -b 32 --workers 4 --model pointmlp --lr 0.1 --optim sgd
